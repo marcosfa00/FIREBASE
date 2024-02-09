@@ -49,7 +49,7 @@ fun Register(){
     OutlinedTextField(
         value = DataUser.age.value,
         onValueChange = {
-           DataUser.age.value = it.toString()
+           DataUser.age.value = it
                         },
         label = { Text("age") },
         keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number)

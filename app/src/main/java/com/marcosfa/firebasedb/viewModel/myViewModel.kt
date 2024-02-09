@@ -4,6 +4,7 @@ import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
+import com.marcosfa.firebasedb.model.DataUser
 import com.marcosfa.firebasedb.model.TAG
 import com.marcosfa.firebasedb.model.User
 import com.marcosfa.firebasedb.model.repository
@@ -13,6 +14,8 @@ class myViewModel(private val model: repository ): ViewModel() {
 
    private val _users = MutableLiveData<List<User>>()
     val users: LiveData<List<User>> get() = _users
+
+
 
     /**
      * Al inicializar el viewModel en el MainActivity.kt
@@ -30,15 +33,22 @@ class myViewModel(private val model: repository ): ViewModel() {
                     val user = document.toObject(User::class.java)
                     user?.let {
                         userList.add(it)
+                        DataUser.users.add(it)
                     }
                 }
                 _users.value = userList
+
                 Log.d(TAG, "Users loaded successfully: ${userList.size} users")
+                for (i in 0 until userList.size){
+                    Log.d(TAG,"Nombre: ${userList.get(i).name}, Edad: ${userList.get(i).age}, Email: ${userList.get(i).gmail}")
+                }
             }
             .addOnFailureListener { e ->
                 Log.e(TAG, "Error loading users", e)
             }
     }
+
+
 
 
 
@@ -52,5 +62,8 @@ class myViewModel(private val model: repository ): ViewModel() {
                 // Maneja errores de agregar usuario
             }
     }
+
+
+
 
 }

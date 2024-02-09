@@ -40,6 +40,8 @@ gitGraph
     commit id:"MVVM + FIREBASE + REGISTER"
     commit id: "GOOGLE.json + build.gradle.kts"
     commit id: "README EXPLANATION + GITGRAPH"
+    commit id: "LAST UPDATE"
+    commit id: "Add Users to DataUser & show the list on the Log CAT"
 ```
 
 

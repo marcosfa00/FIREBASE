@@ -21,6 +21,8 @@ class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         Log.d(TAG, "onCreate")
+
+
         // Inicializa Firebase
         FirebaseApp.initializeApp(this)
         // Si estás utilizando Firebase Analytics, también deberías inicializarlo
