@@ -10,7 +10,7 @@ import androidx.compose.runtime.mutableStateOf
  * For FIREBASE must have an empty contstructor
  */
 data class User (
-    val id :String,
+    val id:String,
     val name:String,
     val age:String,
     val gmail:String
