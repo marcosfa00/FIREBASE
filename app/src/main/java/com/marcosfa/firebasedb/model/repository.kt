@@ -6,6 +6,7 @@ import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.QuerySnapshot
 
 
+
 /**
  * Here there are the Methods to connect the database ans obtain all the data
  * as well as uploading data
@@ -24,6 +25,8 @@ object repository {
         // Realiza una consulta para obtener todos los documentos de la colección "usuarios"
         return database.collection("users").get()
     }
+
+
 
 
 

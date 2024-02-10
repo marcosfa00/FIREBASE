@@ -80,6 +80,7 @@ fun ButtonRegister(vModel: myViewModel){
     Button(onClick = {
 
            vModel.addUser(User(DataUser.id.value,DataUser.name.value,DataUser.age.value.toString(),DataUser.gmail.value))
+
     }) {
         Text(text = "SIGN UP")
     }

@@ -19,9 +19,10 @@ class myViewModel(private val model: repository ): ViewModel() {
      */
     init{
        loadUsers()
+
     }
 
-    private fun loadUsers() {
+   private fun loadUsers() {
         model.getUsers()
             .addOnSuccessListener { querySnapshot ->
                 val userList = mutableListOf<User>()
