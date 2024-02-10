@@ -1,244 +1,142 @@
 
-# PROGRAMANDO CON MVVM & FIREBASE
 
-Model viewModel View
+# CONEXIÓN CON BASE DE DATOS FIREBASE
+Bien a continuacion vamos a explicar paso a paso como crear una aplicacion en **Android studio** en **Kotlin** en la cual nos conectaremos a una base de datos [FIREBASE](https://firebase.google.com)
 
-Bien una vez configurada la base de datos y descargado el archivo **json** ya podemos empezar a programar.
+## ¿Que base de datos utilizar?
 
-las estructura de datos sera la siguiente:
+Bien, a la hora de crear iuna **base de datos** en Android, una practica muy común es usar **[ROOM](https://developer.android.com/training/data-storage/room?hl=es-419)** que crea un fichero **SQLite** y guarda los datos en local.
 
+Esto es una forma facil de gaurdar datos, pero no sirve para todo tipo de datos, y lo cierto es que para aplicaciones en las cuales queramos guardar usuarios, no es nada eficiente. Ya que los usuarios que guardes en un dispositivo Android no estarán en otro.
 
+#### Entonces porque se usa ROOM ?
 
-```mermaid
-graph TD
-    subgraph Firebase
-        A(User) -->|DataClass| B(UserData)
-        A --> C{Repository}
-        C -->|Singleton| D[Repository]
-        D -->|Methods| E(GetData, UpdateData, ...)
-    end
+Pues la respuesta es muy sencilla. Room es comunmente utilizado par almacenar datos no triviales en una aplicacion, como la configuración de un usuario.
+**Me explico:** Se guardan datos no prescindibles para el funcionamiento de la aplicacion, como si un usuario emplea modo oscuro o claro, si le gusta que los menús se encuentren en una posición u otra, etc.
 
-    subgraph ViewModel
-        F[ViewModel] -->|Dependency Injection| D
-        F -->|Methods| G(ProcessData, DisplayData, ...)
-    end
-
-    subgraph Views
-        H[Registration] -->|Handles User Registration| F
-        I[Login] -->|Handles User Login| F
-        J[Show] -->|Displays Users| F
-        K[Update] -->|Updates Users| F
-    end
-
-``````
-## REGISTRO USUARIOS
-Bien a continuación veremos como simplemente registrar usuarios en la base de datos, (
-Posteriormente lo cambiemos por un Listener, pero es importante entender la logica primero) 
-
-Tendremos una paquete **MODEL** donde estará nuestra clase **USER** que constará de una **data class** esta recogerá todos los datos
-que se guardarán en la base de datos. 
-
-```KOTLIN
-
-/**
- * This class determines the parameters a User in Our database should have
- * For FIREBASE must have an empty contstructor
- */
-data class User (
-    val id:String,
-    val name:String,
-    val age:String,
-    val gmail:String
-
-){
-    //Here we declare the empty constriuctor
-    constructor():this("","","","@gmail.com")
-}
-```
-**IMPORTANTE: ** Para trabajar con Firebase debemos crear un contructor por defecto de esta clase
-
-TENDREMOS TAMBIÉN UN **Object** de tipo **DataUser** que este si será el engargado de recoger todos los datos de la UI para a traves del **VIEWMODEL**
-pasarselos a la base de datos:
-
-```KOTLIN
-
-object DataUser {
-    val id = mutableStateOf("")
-    val name = mutableStateOf("")
-    val age = mutableStateOf("")
-    val gmail = mutableStateOf("")
-    val users = mutableStateOf<List<User>>(emptyList())
-
-}
-```
-EN LA CLASE REPOSITORY ES LA QUE REALMENTE ACTUARÁ COMO **MODEL** Y DE LA CUAL OBTENDREMOS LAS FUNCIONES DE ACCESO A LA BASE DE DATOS
-
-```KOTLIN
-
-/**
- * Here there are the Methods to connect the database ans obtain all the data
- * as well as uploading data
- */
-object repository {
-    //It works as a singleton so it must be created an instance
-
-
-    private val database = FirebaseFirestore.getInstance()
-
-    fun addUser(user: User): Task<DocumentReference> { //Task indica que devuelkve una operacion ASINCRONA, la referencia de iun documenrto
-        return database.collection("users").add(user)
-    }
-
-    fun getUsers(): Task<QuerySnapshot> {
-        // Realiza una consulta para obtener todos los documentos de la colección "usuarios"
-        return database.collection("users").get()
-    }
-}
-```
-
-**VIEWMODEL**
-
-Por inyección de dependencias obtendremos todos los datos de la clase **REPOSITORY**
-```KOTLIN
-//To work directly9 with the repository Methods the injection of dependences is obligatory in MVVM design Patron
-class myViewModel(private val model: repository ): ViewModel() {
-
-
-    /**
-     * Al inicializar el viewModel en el MainActivity.kt
-     * se cargará las funciones que llamemos desde el init
-     */
-    init {
-        loadUsers()
-
-    }
-
-    private fun loadUsers() {
-        model.getUsers()
-            .addOnSuccessListener { querySnapshot ->
-                val userList = mutableListOf<User>()
-                for (document in querySnapshot.documents) {
-                    val user = document.toObject(User::class.java)
-                    user?.let {
-                        userList.add(it)
-
-                    }
-                }
-
-                DataUser.users.value = userList
-                Log.d(TAG, "Users loaded successfully: ${userList.size} users")
-                for (i in 0 until userList.size) {
-                    Log.d(
-                        TAG,
-                        "Id:${userList.get(i).id}  Nombre: ${userList.get(i).name}, Edad: ${
-                            userList.get(i).age
-                        }, Email: ${userList.get(i).gmail}"
-                    )
-                }
-                Log.d(TAG, "MI LISTA DE USUARIOS DEL DATA USER")
-
-
-            }
-            .addOnFailureListener { e ->
-                Log.e(TAG, "Error loading users", e)
-            }
-    }
-}
-
-```
+### FIREBASE
+Bien, a la hora de guardar **Usuarios** o datos relevantes d euna aplicación, gaurdarlos en la nube es muy buena practica, ya que todas tus aplicaciones cliente podrás acceder a todos esos datos.
 
 
 
-## LISTENER
-Bien hemos substituido el código Anterior para hacer una función que sea un Listener,
-Esta nos permitirá actualizar los cambios cada Rato, por lo que si desde un dispositivo se crea un nuevo usuario
-desde otro dispositivo se actualizará el usuario
+## Configuración
 
-Para ello en la clase Model se ha substituido la Función Antigua **getUsers** por un Listener:
+Para poder empezar a usar Firebase debemos preparar Android Studio primero, para ello crearemos una nueva *Empty Activity*
 
+Aquí nos iremos ha los archivos *Gradle* y añadiremos las dependencias de google-services
 
-esta función crea un flujo que emite listas de usuarios cada vez que hay un cambio en la colección "users" de Firestore. Además, se encarga de manejar errores y cerrar adecuadamente el flujo cuando sea necesario.
+**build.gradle.kts**
 
-**FUNCION EN EL MODEL**
-
-```Kotlin
-    /**
-     * Creates a callback flow for listening to changes in the "users" collection in a Firestore database.
-     */
-    fun listenForUserChanges() = callbackFlow<List<User>> {
-        // inicializa el listener
-        val listener = database.collection("users")
-            .addSnapshotListener { snapshot, exception ->
-                if (exception != null) {
-                    close(exception)
-                    return@addSnapshotListener
-                }
-                val users = snapshot?.documents?.mapNotNull { document ->
-                    document.toObject(User::class.java)
-                } ?: emptyList()
-                trySend(users).isSuccess
-            }
-        awaitClose { listener.remove() }
-    }
-```
-**FUNCION EN EL VIEWMODEL**
-
-Bien para que la funcion anterior tenga Efecto, debemos crear una instancia de la misma en el **viewModel** de manera que
-pudamos realmente estar escuchando todo el rato de la base de datos.
-
-EN la siguiente funcion creamos una corrutina que nos brinda **viewModel** esto hace que el código funcione
-de manera Asincrona y no se nos pare la aplicacionc ada vez que se accede a la base de datos.
-
-Tras obtener todos los datos llamando a la función del **MODEL**  guardamos la lista de usuarios obtenidos en 
-Un **MutableState de tipo Lista de Users** para poder acceder a estos datos mas tarde.
-
-Esta función se llamará en la inicialización del **viewModel**
+Ruta general:
 
 ```kotlin
-/**
-     * Al inicializar el viewModel en el MainActivity.kt
-     * se cargará las funciones que llamemos desde el init
-     */
-    init{
-        listenForUserChanges()
-    }
+plugins{
+    // Add the dependency for the Google services Gradle plugin
+    id("com.google.gms.google-services") version "4.4.0" apply false
+}
+    
+```
 
-    private fun listenForUserChanges() {
-        viewModelScope.launch {
-            // Escucha cambios en la colección de usuarios
-            model.listenForUserChanges().collect { userList ->
-                // Actualiza la lista de usuarios
-                DataUser.users.value = userList
-            }
+Ruta ./App
+
+```kotlin
+plugins{
+     // Add the Google services Gradle plugin
+    id("com.google.gms.google-services")
+}
+
+dependencies{
+
+// Import the Firebase BoM
+    implementation(platform("com.google.firebase:firebase-bom:32.3.1"))
+
+    // When using the BoM, you don't specify versions in Firebase library dependencies
+
+    // Add the dependency for the Firebase SDK for Google Analytics
+    implementation("com.google.firebase:firebase-analytics-ktx")
+
+    // TODO: Add the dependencies for any other Firebase products you want to use
+    // See https://firebase.google.com/docs/android/setup#available-libraries
+    // For example, add the dependencies for Firebase Authentication and Cloud Firestore
+    implementation("com.google.firebase:firebase-auth-ktx")
+    implementation("com.google.firebase:firebase-firestore-ktx")
+
+}
+
+``````
+
+### JSON
+
+Dentro de la ruta **./app** debemos añadir un archivo **.json** que descargaremos de [Firebase](https://firebase.google.com) al crear un nuevo proyecto con una base de datos.
+
+Este debe tener una configuración parecida a lo siguiente:
+
+```json
+
+{
+  "project_info": {
+    "project_number": "----",
+    "project_id": ".....",
+    "storage_bucket": "......-.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:----:android:----",
+        "android_client_info": {
+          "package_name": "com.----"
         }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "----"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:---:android:----",
+        "android_client_info": {
+          "package_name": "com.----"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "----"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
     }
+  ],
+  "configuration_version": "1"
+}
+``````
 
-```
-
-```mermaid
-    %%{init: { 'logLevel': 'debug', 'theme': 'base', 'gitGraph': {'showBranches': true, 'showCommitLabel': true, 'mainBranchName': 'Main'}} }%%
-gitGraph
-  commit id:"Readme.md"
-  commit id:"readmeFiles/"
-  branch dev
-    commit id:"MVVM + FIREBASE + REGISTER"
-    commit id: "GOOGLE.json + build.gradle.kts"
-    commit id: "README EXPLANATION + GITGRAPH"
-    commit id: "LAST UPDATE"
-    commit id: "Add Users to DataUser & show the list on the Log CAT"
-    commit id: "Se muestran los Usuarios"
-  branch Listener
-    commit id: "Listener"
-    commit id: "Readme updated"
-    checkout dev
-    merge Listener
-    checkout Main
-    merge dev
-   
-```
+---
 
 
 
+# Creacion de la base de datos en Firebase
 
 
+Creamos un nuevo proyecto:
+
+![newProject.png](readmeFiles%2FnewProject.png)
+
+Dentro de este proyecto creamos una nueva base de datos **!Ojo¡** debemos tener en cuenta que esta base de datos no es de tipo **SQL** si no que será una base de datos **documental** como puede ser más conocida: **mongoDB**<img src="https://www.vectorlogo.zone/logos/mongodb/mongodb-icon.svg" alt="mongodb" width="40" height="40"/>
+
+![database.png](readmeFiles%2Fdatabase.png)
+
+Y listo, tras configurar unos sencillos campos ya podemos empezar a utilizar Firebase en nuestro proyecto
 
