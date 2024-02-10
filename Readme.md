@@ -232,6 +232,7 @@ gitGraph
     commit id: "Readme updated"
     checkout dev
     merge Listener
+    commit id: "Kotlin doc of all functions"
     checkout Main
     merge dev
    
