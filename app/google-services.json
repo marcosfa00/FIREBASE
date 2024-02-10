@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "655934629041",
+    "project_id": "fir-4292a",
+    "storage_bucket": "fir-4292a.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:655934629041:android:f43169d29317cc70f2ae90",
+        "android_client_info": {
+          "package_name": "com.marcosfa.firebasedb"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDe4XUsbj4T040bSxrsBSl_f-QsIrnDPas"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
