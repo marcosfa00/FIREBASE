@@ -382,8 +382,7 @@ gitGraph
     checkout dev
     merge Listener
     commit id: "Kotlin doc of all functions"
-    checkout Main
-    merge dev
+    commit id: "Last Update"
    
 ```
 
