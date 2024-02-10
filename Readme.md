@@ -42,6 +42,10 @@ gitGraph
     commit id: "README EXPLANATION + GITGRAPH"
     commit id: "LAST UPDATE"
     commit id: "Add Users to DataUser & show the list on the Log CAT"
+    branch UI_users
+    checkout dev
+    commit id: "Se muestran los Usuarios"
+   
 ```
 
 

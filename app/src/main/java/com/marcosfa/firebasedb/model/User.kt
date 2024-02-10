@@ -26,7 +26,7 @@ object DataUser {
     val name = mutableStateOf("")
     val age = mutableStateOf("")
     val gmail = mutableStateOf("")
-    val users = mutableListOf<User>()
+    val users = mutableStateOf<List<User>>(emptyList())
 
 
 

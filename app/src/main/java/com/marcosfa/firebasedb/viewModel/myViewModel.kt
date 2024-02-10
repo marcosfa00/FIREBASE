@@ -12,10 +12,6 @@ import com.marcosfa.firebasedb.model.repository
 //To work directly9 with the repository Methods the injection of dependences is obligatory in MVVM design Patron
 class myViewModel(private val model: repository ): ViewModel() {
 
-   private val _users = MutableLiveData<List<User>>()
-    val users: LiveData<List<User>> get() = _users
-
-
 
     /**
      * Al inicializar el viewModel en el MainActivity.kt
@@ -33,15 +29,18 @@ class myViewModel(private val model: repository ): ViewModel() {
                     val user = document.toObject(User::class.java)
                     user?.let {
                         userList.add(it)
-                        DataUser.users.add(it)
+
                     }
                 }
-                _users.value = userList
 
+                DataUser.users.value = userList
                 Log.d(TAG, "Users loaded successfully: ${userList.size} users")
                 for (i in 0 until userList.size){
-                    Log.d(TAG,"Nombre: ${userList.get(i).name}, Edad: ${userList.get(i).age}, Email: ${userList.get(i).gmail}")
+                    Log.d(TAG,"Id:${userList.get(i).id}  Nombre: ${userList.get(i).name}, Edad: ${userList.get(i).age}, Email: ${userList.get(i).gmail}")
                 }
+                Log.d(TAG,"MI LISTA DE USUARIOS DEL DATA USER")
+
+
             }
             .addOnFailureListener { e ->
                 Log.e(TAG, "Error loading users", e)
@@ -62,6 +61,7 @@ class myViewModel(private val model: repository ): ViewModel() {
                 // Maneja errores de agregar usuario
             }
     }
+
 
 
 
