@@ -9,7 +9,7 @@ las estructura de datos sera la siguiente:
 
 
 
-``` mermaid
+```mermaid
 graph TD
     subgraph Firebase
         A(User) -->|DataClass| B(UserData)
@@ -31,6 +31,124 @@ graph TD
     end
 
 ``````
+## REGISTRO USUARIOS
+Bien a continuación veremos como simplemente registrar usuarios en la base de datos, (
+Posteriormente lo cambiemos por un Listener, pero es importante entender la logica primero) 
+
+Tendremos una paquete **MODEL** donde estará nuestra clase **USER** que constará de una **data class** esta recogerá todos los datos
+que se guardarán en la base de datos. 
+
+```KOTLIN
+
+/**
+ * This class determines the parameters a User in Our database should have
+ * For FIREBASE must have an empty contstructor
+ */
+data class User (
+    val id:String,
+    val name:String,
+    val age:String,
+    val gmail:String
+
+){
+    //Here we declare the empty constriuctor
+    constructor():this("","","","@gmail.com")
+}
+```
+**IMPORTANTE: ** Para trabajar con Firebase debemos crear un contructor por defecto de esta clase
+
+TENDREMOS TAMBIÉN UN **Object** de tipo **DataUser** que este si será el engargado de recoger todos los datos de la UI para a traves del **VIEWMODEL**
+pasarselos a la base de datos:
+
+```KOTLIN
+
+object DataUser {
+    val id = mutableStateOf("")
+    val name = mutableStateOf("")
+    val age = mutableStateOf("")
+    val gmail = mutableStateOf("")
+    val users = mutableStateOf<List<User>>(emptyList())
+
+}
+```
+EN LA CLASE REPOSITORY ES LA QUE REALMENTE ACTUARÁ COMO **MODEL** Y DE LA CUAL OBTENDREMOS LAS FUNCIONES DE ACCESO A LA BASE DE DATOS
+
+```KOTLIN
+
+/**
+ * Here there are the Methods to connect the database ans obtain all the data
+ * as well as uploading data
+ */
+object repository {
+    //It works as a singleton so it must be created an instance
+
+
+    private val database = FirebaseFirestore.getInstance()
+
+    fun addUser(user: User): Task<DocumentReference> { //Task indica que devuelkve una operacion ASINCRONA, la referencia de iun documenrto
+        return database.collection("users").add(user)
+    }
+
+    fun getUsers(): Task<QuerySnapshot> {
+        // Realiza una consulta para obtener todos los documentos de la colección "usuarios"
+        return database.collection("users").get()
+    }
+}
+```
+
+**VIEWMODEL**
+
+Por inyección de dependencias obtendremos todos los datos de la clase **REPOSITORY**
+```KOTLIN
+//To work directly9 with the repository Methods the injection of dependences is obligatory in MVVM design Patron
+class myViewModel(private val model: repository ): ViewModel() {
+
+
+    /**
+     * Al inicializar el viewModel en el MainActivity.kt
+     * se cargará las funciones que llamemos desde el init
+     */
+    init {
+        loadUsers()
+
+    }
+
+    private fun loadUsers() {
+        model.getUsers()
+            .addOnSuccessListener { querySnapshot ->
+                val userList = mutableListOf<User>()
+                for (document in querySnapshot.documents) {
+                    val user = document.toObject(User::class.java)
+                    user?.let {
+                        userList.add(it)
+
+                    }
+                }
+
+                DataUser.users.value = userList
+                Log.d(TAG, "Users loaded successfully: ${userList.size} users")
+                for (i in 0 until userList.size) {
+                    Log.d(
+                        TAG,
+                        "Id:${userList.get(i).id}  Nombre: ${userList.get(i).name}, Edad: ${
+                            userList.get(i).age
+                        }, Email: ${userList.get(i).gmail}"
+                    )
+                }
+                Log.d(TAG, "MI LISTA DE USUARIOS DEL DATA USER")
+
+
+            }
+            .addOnFailureListener { e ->
+                Log.e(TAG, "Error loading users", e)
+            }
+    }
+}
+
+```
+
+
+
 ## LISTENER
 Bien hemos substituido el código Anterior para hacer una función que sea un Listener,
 Esta nos permitirá actualizar los cambios cada Rato, por lo que si desde un dispositivo se crea un nuevo usuario
@@ -43,7 +161,7 @@ esta función crea un flujo que emite listas de usuarios cada vez que hay un cam
 
 **FUNCION EN EL MODEL**
 
-``` Kotlin
+```Kotlin
     /**
      * Creates a callback flow for listening to changes in the "users" collection in a Firestore database.
      */
@@ -76,7 +194,7 @@ Un **MutableState de tipo Lista de Users** para poder acceder a estos datos mas 
 
 Esta función se llamará en la inicialización del **viewModel**
 
-``` kotlin
+```kotlin
 /**
      * Al inicializar el viewModel en el MainActivity.kt
      * se cargará las funciones que llamemos desde el init
@@ -98,7 +216,7 @@ Esta función se llamará en la inicialización del **viewModel**
 ```
 
 ```mermaid
-  %%{init: { 'logLevel': 'debug', 'theme': 'base', 'gitGraph': {'showBranches': true, 'showCommitLabel': true, 'mainBranchName': 'Main'}} }%%
+   %%{init: { 'logLevel': 'debug', 'theme': 'base', 'gitGraph': {'showBranches': true, 'showCommitLabel': true, 'mainBranchName': 'Main'}} }%%
 gitGraph
   commit id:"Readme.md"
   commit id:"readmeFiles/"
@@ -108,11 +226,14 @@ gitGraph
     commit id: "README EXPLANATION + GITGRAPH"
     commit id: "LAST UPDATE"
     commit id: "Add Users to DataUser & show the list on the Log CAT"
-    branch UI_users
-    checkout dev
     commit id: "Se muestran los Usuarios"
   branch Listener
     commit id: "Listener"
+    commit id: "Readme updated"
+    checkout dev
+    merge Listener
+    checkout Main
+    merge dev
    
 ```
 

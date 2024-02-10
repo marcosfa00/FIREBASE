@@ -28,6 +28,4 @@ object DataUser {
     val gmail = mutableStateOf("")
     val users = mutableStateOf<List<User>>(emptyList())
 
-
-
 }
