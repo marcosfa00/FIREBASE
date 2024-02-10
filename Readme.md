@@ -216,7 +216,7 @@ Esta función se llamará en la inicialización del **viewModel**
 ```
 
 ```mermaid
-   %%{init: { 'logLevel': 'debug', 'theme': 'base', 'gitGraph': {'showBranches': true, 'showCommitLabel': true, 'mainBranchName': 'Main'}} }%%
+    %%{init: { 'logLevel': 'debug', 'theme': 'base', 'gitGraph': {'showBranches': true, 'showCommitLabel': true, 'mainBranchName': 'Main'}} }%%
 gitGraph
   commit id:"Readme.md"
   commit id:"readmeFiles/"

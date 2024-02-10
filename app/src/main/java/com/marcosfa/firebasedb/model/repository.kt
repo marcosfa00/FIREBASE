@@ -8,6 +8,7 @@ import kotlinx.coroutines.channels.awaitClose
 import kotlinx.coroutines.flow.callbackFlow
 
 
+
 /**
  * Here there are the Methods to connect the database ans obtain all the data
  * as well as uploading data
@@ -45,6 +46,8 @@ object repository {
             }
         awaitClose { listener.remove() }
     }
+
+
 
 
 }

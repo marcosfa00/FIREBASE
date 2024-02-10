@@ -19,7 +19,7 @@ class myViewModel(private val model: repository ): ViewModel() {
      * Al inicializar el viewModel en el MainActivity.kt
      * se cargará las funciones que llamemos desde el init
      */
-    init{
+     init{
         listenForUserChanges()
     }
 
@@ -34,6 +34,7 @@ class myViewModel(private val model: repository ): ViewModel() {
     }
 
 
+ 
 
 
 
