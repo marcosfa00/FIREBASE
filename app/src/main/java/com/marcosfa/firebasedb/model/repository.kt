@@ -4,6 +4,8 @@ import com.google.android.gms.tasks.Task
 import com.google.firebase.firestore.DocumentReference
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.QuerySnapshot
+import kotlinx.coroutines.channels.awaitClose
+import kotlinx.coroutines.flow.callbackFlow
 
 
 /**
@@ -25,6 +27,24 @@ object repository {
         return database.collection("users").get()
     }
 
+    /**
+     * Creates a callback flow for listening to changes in the "users" collection in a Firestore database.
+     */
+    fun listenForUserChanges() = callbackFlow<List<User>> {
+        // inicializa el listener
+        val listener = database.collection("users")
+            .addSnapshotListener { snapshot, exception ->
+                if (exception != null) {
+                    close(exception)
+                    return@addSnapshotListener
+                }
+                val users = snapshot?.documents?.mapNotNull { document ->
+                    document.toObject(User::class.java)
+                } ?: emptyList()
+                trySend(users).isSuccess
+            }
+        awaitClose { listener.remove() }
+    }
 
 
 }

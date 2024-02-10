@@ -4,10 +4,12 @@ import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
 import com.marcosfa.firebasedb.model.DataUser
 import com.marcosfa.firebasedb.model.TAG
 import com.marcosfa.firebasedb.model.User
 import com.marcosfa.firebasedb.model.repository
+import kotlinx.coroutines.launch
 
 //To work directly9 with the repository Methods the injection of dependences is obligatory in MVVM design Patron
 class myViewModel(private val model: repository ): ViewModel() {
@@ -18,33 +20,17 @@ class myViewModel(private val model: repository ): ViewModel() {
      * se cargará las funciones que llamemos desde el init
      */
     init{
-       loadUsers()
+        listenForUserChanges()
     }
 
-    private fun loadUsers() {
-        model.getUsers()
-            .addOnSuccessListener { querySnapshot ->
-                val userList = mutableListOf<User>()
-                for (document in querySnapshot.documents) {
-                    val user = document.toObject(User::class.java)
-                    user?.let {
-                        userList.add(it)
-
-                    }
-                }
-
+    private fun listenForUserChanges() {
+        viewModelScope.launch {
+            // Escucha cambios en la colección de usuarios
+            model.listenForUserChanges().collect { userList ->
+                // Actualiza la lista de usuarios
                 DataUser.users.value = userList
-                Log.d(TAG, "Users loaded successfully: ${userList.size} users")
-                for (i in 0 until userList.size){
-                    Log.d(TAG,"Id:${userList.get(i).id}  Nombre: ${userList.get(i).name}, Edad: ${userList.get(i).age}, Email: ${userList.get(i).gmail}")
-                }
-                Log.d(TAG,"MI LISTA DE USUARIOS DEL DATA USER")
-
-
             }
-            .addOnFailureListener { e ->
-                Log.e(TAG, "Error loading users", e)
-            }
+        }
     }
 
 
@@ -55,7 +41,7 @@ class myViewModel(private val model: repository ): ViewModel() {
         model.addUser(user)
             .addOnSuccessListener {
                 // Actualiza la lista de usuarios después de agregar uno nuevo
-                loadUsers()
+               listenForUserChanges()
             }
             .addOnFailureListener { e ->
                 // Maneja errores de agregar usuario
