@@ -3,6 +3,7 @@ package com.marcosfa.firebasedb.ui
 import android.util.Log
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
@@ -21,20 +22,26 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.google.firebase.auth.FirebaseAuth
 import com.marcosfa.firebasedb.model.DataUser
 import com.marcosfa.firebasedb.model.TAG
 import com.marcosfa.firebasedb.model.User
 import com.marcosfa.firebasedb.viewModel.myViewModel
 
 @Composable
-fun ShowRegister(vModel: myViewModel){
+fun ShowRegister(vModel: myViewModel, autentification: FirebaseAuth){
     Column(
         modifier = Modifier
             .fillMaxSize()
             .padding(16.dp)
     ) {
         Register()
-        ButtonRegister(vModel)
+        Row {
+            ButtonRegister(vModel, autentification)
+            ButtonCerrarSesion()
+        }
+
+
         ShowAllUsers(DataUser.users.value)
 
     }
@@ -45,12 +52,7 @@ fun ShowRegister(vModel: myViewModel){
 @Composable
 fun Register(){
 
-    OutlinedTextField(
-        value = DataUser.id.value,
-        onValueChange = { DataUser.id.value = it },
-        label = { Text("id") },
-        keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number)
-    )
+
 
     OutlinedTextField(
         value = DataUser.name.value,
@@ -72,17 +74,38 @@ fun Register(){
         label = { Text("gmail") },
         keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Email)
     )
+    OutlinedTextField(
+        value = DataUser.password.value,
+        onValueChange = {DataUser.password.value = it.lowercase() },
+        label = { Text("password") },
+        keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Email)
+    )
 }
 
 
 @Composable
-fun ButtonRegister(vModel: myViewModel){
+fun ButtonRegister(vModel: myViewModel, autentification: FirebaseAuth){
     Button(onClick = {
 
-           vModel.addUser(User(DataUser.id.value,DataUser.name.value,DataUser.age.value.toString(),DataUser.gmail.value))
+            val user = User(DataUser.name.value,DataUser.age.value.toString(),DataUser.gmail.value, false)
+           vModel.addUser(user,autentification)
+
 
     }) {
         Text(text = "SIGN UP")
+    }
+}
+
+
+@Composable
+fun ButtonCerrarSesion(){
+    Button(onClick = {
+       // FirebaseAuth.getInstance().signOut()
+
+
+
+    }) {
+        Text(text = "CERRAR SESION")
     }
 }
 
@@ -113,12 +136,8 @@ fun UserCard(user:User){
 
     ){
         Column {
-            // id
-            Text(
-                text = user.id,
-                style = TextStyle(fontSize = 20.sp, fontWeight = FontWeight.Bold),
-                modifier = Modifier.padding(bottom = 8.dp)
-            )
+
+
             // name
             Text(
                 text = user.name,

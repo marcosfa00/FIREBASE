@@ -5,8 +5,10 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.google.firebase.auth.FirebaseAuth
 import com.marcosfa.firebasedb.model.DataUser
 import com.marcosfa.firebasedb.model.TAG
+import com.marcosfa.firebasedb.model.TAG2
 import com.marcosfa.firebasedb.model.User
 import com.marcosfa.firebasedb.model.repository
 import kotlinx.coroutines.launch
@@ -70,16 +72,56 @@ class myViewModel(private val model: repository ): ViewModel() {
      * addUser(newUser)
      * ```
      */
-    fun addUser(user: User) {
-        model.addUser(user)
-            .addOnSuccessListener {
-                // Actualiza la lista de usuarios después de agregar uno nuevo
-               listenForUserChanges()
-            }
-            .addOnFailureListener { e ->
-                // Maneja errores de agregar usuario
-            }
+    fun addUser(user: User, autentificacion: FirebaseAuth) {
+        autenticarUsuario(user.gmail, DataUser.password.value,autentificacion, user)
+
+
     }
+
+    fun autenticarUsuario(mail:String, password :String, autentificacion :FirebaseAuth, user: User){
+        autentificacion.createUserWithEmailAndPassword(mail,password)
+            .addOnCompleteListener{
+                    task ->
+                if (task.isSuccessful) {
+                    Log.d(TAG2, "Usuario Autenticado ${autentificacion.currentUser?.uid}")
+                    model.addUser(user, autentificacion.currentUser?.uid.toString())
+                        .addOnSuccessListener {
+                            // Actualiza la lista de usuarios después de agregar uno nuevo
+                            listenForUserChanges()
+
+
+                        }
+                        .addOnFailureListener { e ->
+                            // Maneja errores de agregar usuario
+                            Log.d(TAG,"Error $e")
+                        }
+
+                    // Aquí puedes llamar a tu lógica para agregar el usuario a la base de datos
+                } else {
+                    Log.d(TAG2, "Error en la autenticación: ${task.exception}")
+                }
+            }
+
+
+    }
+
+
+
+
+
+
+    /**
+     * Registers a user with email and password using Firebase Authentication.
+     *
+     * This function takes the user's email, password, FirebaseAuth instance, and NavController as parameters.
+     * It launches a coroutine to perform the user registration asynchronously.
+     *
+     * @param email The email address of the user.
+     * @param password The password for the user account.
+     * @param auth An instance of FirebaseAuth used for user authentication.
+     * @param navController The NavController for navigating to the next destination after successful registration.
+     */
+
 
 
 

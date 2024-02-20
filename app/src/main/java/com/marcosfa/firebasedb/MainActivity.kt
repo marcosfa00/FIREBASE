@@ -11,17 +11,28 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import com.google.firebase.FirebaseApp
 import com.google.firebase.analytics.FirebaseAnalytics
+import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.auth.ktx.auth
+import com.google.firebase.ktx.Firebase
+import com.marcosfa.firebasedb.model.DataUser
 import com.marcosfa.firebasedb.model.TAG
+import com.marcosfa.firebasedb.model.TAG2
 import com.marcosfa.firebasedb.model.repository
 import com.marcosfa.firebasedb.ui.ShowRegister
 import com.marcosfa.firebasedb.ui.theme.FirebasedbTheme
 import com.marcosfa.firebasedb.viewModel.myViewModel
 
+
 class MainActivity : ComponentActivity() {
+    //Authentication lateinit indica que se va a crear más tarde
+    lateinit var firebaseAuth : FirebaseAuth
+
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         Log.d(TAG, "onCreate")
 
+       firebaseAuth = Firebase.auth
 
         // Inicializa Firebase
         FirebaseApp.initializeApp(this)
@@ -36,16 +47,24 @@ class MainActivity : ComponentActivity() {
                 ) {
                     val model = repository
                     val viewModel = myViewModel(model)
-                    Greeting(viewModel)
+                    Greeting(viewModel, firebaseAuth)
+                    Log.d(TAG2,"Usuario Autentificaco al iniciar la ap ${firebaseAuth.currentUser?.uid}")
+
                 }
             }
         }
 
     }
+
+
+    override fun onStart() {
+        super.onStart()
+
+    }
 }
 
 @Composable
-fun Greeting(vModel:myViewModel) {
- ShowRegister(vModel)
+fun Greeting(vModel:myViewModel, auth: FirebaseAuth) {
+ ShowRegister(vModel, auth)
 }
 

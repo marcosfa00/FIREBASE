@@ -1,6 +1,7 @@
 package com.marcosfa.firebasedb.model
 
 import android.annotation.SuppressLint
+import android.util.Log
 import com.google.android.gms.tasks.Task
 import com.google.firebase.firestore.DocumentReference
 import com.google.firebase.firestore.FirebaseFirestore
@@ -58,8 +59,10 @@ object repository {
      * }
      * ```
      */
-    fun addUser(user: User): Task<DocumentReference>{ //Task indica que devuelkve una operacion ASINCRONA, la referencia de iun documenrto
-        return database.collection("users").add(user)
+    fun addUser(user: User, userId: String): Task<Void> { //Task indica que devuelkve una operacion ASINCRONA, la referencia de iun documenrto
+        val userDocument = database.collection("users").document(userId)
+        Log.d(TAG2,userId)
+        return userDocument.set(user)
     }
 
     /**
