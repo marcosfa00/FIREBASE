@@ -12,7 +12,12 @@
           "package_name": "com.marcosfa.firebasedb"
         }
       },
-      "oauth_client": [],
+      "oauth_client": [
+        {
+          "client_id": "655934629041-1ome7g84908jhnk6qfa38rtbg4qoh5id.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
       "api_key": [
         {
           "current_key": "AIzaSyDe4XUsbj4T040bSxrsBSl_f-QsIrnDPas"
@@ -20,7 +25,12 @@
       ],
       "services": {
         "appinvite_service": {
-          "other_platform_oauth_client": []
+          "other_platform_oauth_client": [
+            {
+              "client_id": "655934629041-1ome7g84908jhnk6qfa38rtbg4qoh5id.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
         }
       }
     }
