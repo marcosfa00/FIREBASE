@@ -73,7 +73,7 @@ fun Greeting(vModel:myViewModel, auth: FirebaseAuth) {
     }else if (DataUser.state.value == DataUser.State.LOGIN){
         LogInView(viewModel = vModel, autentificacion = auth)
     }else{
-        WelcomeText()
+        WelcomeText(vModel)
     }
 
 

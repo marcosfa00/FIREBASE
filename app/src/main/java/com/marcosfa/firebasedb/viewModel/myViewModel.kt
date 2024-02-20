@@ -102,7 +102,12 @@ class myViewModel(private val model: repository ): ViewModel() {
     }
 
 
-
+    /**
+     * Función para iniciar sesión de un usuario mediante el correo electrónico y la contraseña.
+     *   @param mail Correo electrónico del usuario.
+     *   @param password Contraseña del usuario.
+     *   @param autentificacion Instancia de FirebaseAuth utilizada para la autenticación.
+     *   */
     fun loginUser(mail: String,password: String,autentificacion: FirebaseAuth){
         autentificacion.signInWithEmailAndPassword(mail,password)
             .addOnCompleteListener { task ->
@@ -114,6 +119,25 @@ class myViewModel(private val model: repository ): ViewModel() {
                 }
             }
     }
+
+
+
+    fun getDataCurrentUser(mail: String):User{
+        // actualizamos los datos de los usuarios
+        listenForUserChanges()
+        var user:User = User()
+        for (i in DataUser.users.value){
+            if (mail.equals(i.gmail)){
+                Log.d(TAG2,"Hemos encontrado al usuario actual $i")
+                user = i
+            }
+        }
+        return user
+    }
+
+
+
+
 
 
 
