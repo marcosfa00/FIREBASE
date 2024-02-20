@@ -34,7 +34,7 @@ class MainActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
         Log.d(TAG, "onCreate")
 
-       firebaseAuth = Firebase.auth
+        firebaseAuth = Firebase.auth
 
         // Inicializa Firebase
         FirebaseApp.initializeApp(this)
@@ -78,4 +78,3 @@ fun Greeting(vModel:myViewModel, auth: FirebaseAuth) {
 
 
 }
-
