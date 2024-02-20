@@ -81,8 +81,10 @@ dependencies {
     // TODO: Add the dependencies for any other Firebase products you want to use
     // See https://firebase.google.com/docs/android/setup#available-libraries
     // For example, add the dependencies for Firebase Authentication and Cloud Firestore
-    implementation("com.google.firebase:firebase-auth-ktx")
+    implementation("com.google.firebase:firebase-auth-ktx")//Authentication
     implementation("com.google.firebase:firebase-firestore-ktx")
+
+
 
 
 }
