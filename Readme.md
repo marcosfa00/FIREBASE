@@ -1,5 +1,6 @@
 
-
+<<<<<<< HEAD
+=======
 # CONEXIÓN CON BASE DE DATOS FIREBASE
 Bien a continuacion vamos a explicar paso a paso como crear una aplicacion en **Android studio** en **Kotlin** en la cual nos conectaremos a una base de datos [FIREBASE](https://firebase.google.com)
 
@@ -139,4 +140,39 @@ Dentro de este proyecto creamos una nueva base de datos **!Ojo¡** debemos tener
 ![database.png](readmeFiles%2Fdatabase.png)
 
 Y listo, tras configurar unos sencillos campos ya podemos empezar a utilizar Firebase en nuestro proyecto
+
+
+
+
+
+
+
+---
+
+
+# PROGRAMANDO CON MVVM & FIREBASE
+
+
+```mermaid
+    %%{init: { 'logLevel': 'debug', 'theme': 'base', 'gitGraph': {'showBranches': true, 'showCommitLabel': true, 'mainBranchName': 'Main'}} }%%
+gitGraph
+  commit id:"Readme.md"
+  commit id:"readmeFiles/"
+  branch dev
+    commit id:"MVVM + FIREBASE + REGISTER"
+    commit id: "GOOGLE.json + build.gradle.kts"
+    commit id: "README EXPLANATION + GITGRAPH"
+    commit id: "LAST UPDATE"
+    commit id: "Add Users to DataUser & show the list on the Log CAT"
+    commit id: "Se muestran los Usuarios"
+  branch Listener
+    commit id: "Listener"
+    commit id: "Readme updated"
+    checkout dev
+    merge Listener
+    commit id: "Kotlin doc of all functions"
+    commit id: "Last Update"
+   
+```
+
 
