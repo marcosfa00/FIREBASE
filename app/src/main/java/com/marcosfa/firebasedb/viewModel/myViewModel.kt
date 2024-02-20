@@ -56,28 +56,24 @@ class myViewModel(private val model: repository ): ViewModel() {
 
 
     /**
-     * Agrega un nuevo usuario a la base de datos y maneja las respuestas exitosas y fallidas.
+     * Función para agregar un usuario utilizando Firebase Authentication.
      *
-     * Esta función toma un objeto de tipo [User] como parámetro y utiliza el modelo asociado
-     * para agregar el usuario a la base de datos. Se adjuntan listeners para manejar tanto el éxito
-     * como el fracaso de la operación. En caso de éxito, la lista de usuarios se actualiza llamando
-     * a [listenForUserChanges()]. En caso de fracaso, se proporciona una [Exception] que puede
-     * ser utilizada para manejar errores relacionados con la adición de usuarios.
-     *
-     * @param user El objeto [User] que se va a agregar a la base de datos.
-     *
-     * Ejemplo de uso:
-     * ```
-     * val newUser = User("nombre", "correo@example.com", ...)
-     * addUser(newUser)
-     * ```
+     * @param user Objeto User con la información del usuario a agregar.
+     * @param autentificacion Objeto FirebaseAuth para la autenticación.
      */
     fun addUser(user: User, autentificacion: FirebaseAuth) {
         autenticarUsuario(user.gmail, DataUser.password.value,autentificacion, user)
 
 
     }
-
+    /**
+     * Función para autenticar un usuario con correo y contraseña utilizando Firebase Authentication.
+     *
+     * @param mail Correo electrónico del usuario.
+     * @param password Contraseña del usuario.
+     * @param autentificacion Objeto FirebaseAuth para la autenticación.
+     * @param user Objeto User con la información del usuario.
+     */
     fun autenticarUsuario(mail:String, password :String, autentificacion :FirebaseAuth, user: User){
         autentificacion.createUserWithEmailAndPassword(mail,password)
             .addOnCompleteListener{
@@ -107,20 +103,23 @@ class myViewModel(private val model: repository ): ViewModel() {
 
 
 
+    fun loginUser(mail: String,password: String,autentificacion: FirebaseAuth){
+        autentificacion.signInWithEmailAndPassword(mail,password)
+            .addOnCompleteListener { task ->
+                if (task.isSuccessful) {
+                    Log.d(TAG2, "Inicio de sesión exitoso para ${autentificacion.currentUser?.uid}")
+                    DataUser.state.value = DataUser.State.HOME
+                }else{
+                    Log.d(TAG2, "Error en el inicio de sesión: ${task.exception}")
+                }
+            }
+    }
 
 
 
-    /**
-     * Registers a user with email and password using Firebase Authentication.
-     *
-     * This function takes the user's email, password, FirebaseAuth instance, and NavController as parameters.
-     * It launches a coroutine to perform the user registration asynchronously.
-     *
-     * @param email The email address of the user.
-     * @param password The password for the user account.
-     * @param auth An instance of FirebaseAuth used for user authentication.
-     * @param navController The NavController for navigating to the next destination after successful registration.
-     */
+
+
+
 
 
 

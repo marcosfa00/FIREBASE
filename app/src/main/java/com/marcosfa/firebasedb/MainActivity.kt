@@ -18,7 +18,9 @@ import com.marcosfa.firebasedb.model.DataUser
 import com.marcosfa.firebasedb.model.TAG
 import com.marcosfa.firebasedb.model.TAG2
 import com.marcosfa.firebasedb.model.repository
+import com.marcosfa.firebasedb.ui.LogInView
 import com.marcosfa.firebasedb.ui.ShowRegister
+import com.marcosfa.firebasedb.ui.WelcomeText
 import com.marcosfa.firebasedb.ui.theme.FirebasedbTheme
 import com.marcosfa.firebasedb.viewModel.myViewModel
 
@@ -65,6 +67,15 @@ class MainActivity : ComponentActivity() {
 
 @Composable
 fun Greeting(vModel:myViewModel, auth: FirebaseAuth) {
- ShowRegister(vModel, auth)
+
+    if (DataUser.state.value == DataUser.State.REGISTRO){
+        ShowRegister(vModel, auth)
+    }else if (DataUser.state.value == DataUser.State.LOGIN){
+        LogInView(viewModel = vModel, autentificacion = auth)
+    }else{
+        WelcomeText()
+    }
+
+
 }
 

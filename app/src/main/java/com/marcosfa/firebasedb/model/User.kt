@@ -1,6 +1,7 @@
 package com.marcosfa.firebasedb.model
 
 
+import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.mutableStateOf
 
 
@@ -29,8 +30,24 @@ object DataUser {
     val gmail = mutableStateOf("")
     val password = mutableStateOf("")
     val users = mutableStateOf<List<User>>(emptyList())
-    val connected = mutableStateOf(false)
-    val userConnected  = mutableStateOf<User?>(null)
+    var state : MutableState<State> = mutableStateOf( State.REGISTRO)
+
+
+    /**
+     * Enumeración que representa los posibles estados de la aplicación.
+     *
+     * Puede tomar uno de los siguientes valores:
+     * - [REGISTRO]: Estado de registro de usuario.
+     * - [LOGIN]: Estado de inicio de sesión.
+     * - [HOME]: Estado de la pantalla principal (inicio de sesión exitoso).
+     *
+     * Esta enumeración se utiliza para gestionar el flujo de estados en la aplicación.
+     */
+    enum class State{
+        REGISTRO,
+        LOGIN,
+        HOME
+    }
 
 
 }

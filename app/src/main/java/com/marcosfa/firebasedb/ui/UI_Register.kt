@@ -38,7 +38,7 @@ fun ShowRegister(vModel: myViewModel, autentification: FirebaseAuth){
         Register()
         Row {
             ButtonRegister(vModel, autentification)
-            ButtonCerrarSesion()
+            ButtonLogearse()
         }
 
 
@@ -98,14 +98,14 @@ fun ButtonRegister(vModel: myViewModel, autentification: FirebaseAuth){
 
 
 @Composable
-fun ButtonCerrarSesion(){
+fun ButtonLogearse(){
     Button(onClick = {
        // FirebaseAuth.getInstance().signOut()
-
+        DataUser.state.value = DataUser.State.LOGIN
 
 
     }) {
-        Text(text = "CERRAR SESION")
+        Text(text = "LOGEARSE")
     }
 }
 
