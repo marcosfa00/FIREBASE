@@ -2,6 +2,7 @@ package com.marcosfa.firebasedb.ui
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
@@ -47,12 +48,20 @@ fun LogInView(viewModel: myViewModel, autentificacion: FirebaseAuth) {
         )
 
         Spacer(modifier = Modifier.height(16.dp))
+        Row {
+            Button(onClick = {
+                viewModel.loginUser(DataUser.gmail.value, DataUser.password.value, autentificacion)
+            }) {
+                Text(text = "Log In")
+            }
 
-        Button(onClick = {
-            viewModel.loginUser(DataUser.gmail.value, DataUser.password.value, autentificacion)
-        }) {
-            Text(text = "Log In")
+            Button(onClick = {
+                DataUser.state.value = DataUser.State.REGISTRO
+            }) {
+                Text(text = "Volver al Inicio")
+            }
         }
+
     }
 }
 
