@@ -10,16 +10,24 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.text.KeyboardOptions
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.AccountCircle
+import androidx.compose.material.icons.filled.DateRange
+import androidx.compose.material.icons.filled.Lock
+import androidx.compose.material.icons.filled.MailOutline
 import androidx.compose.material3.Button
 import androidx.compose.material3.Card
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.Icon
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
+import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.google.firebase.auth.FirebaseAuth
@@ -58,7 +66,13 @@ fun Register(){
         value = DataUser.name.value,
         onValueChange = { DataUser.name.value = it },
         label = { Text("name") },
-        keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Text)
+        keyboardOptions = KeyboardOptions(
+            keyboardType = KeyboardType.Text,
+            imeAction = ImeAction.Done
+        ),
+        leadingIcon = {
+            Icon(Icons.Default.AccountCircle, contentDescription = "Name icon")
+        }
     )
     OutlinedTextField(
         value = DataUser.age.value,
@@ -66,19 +80,38 @@ fun Register(){
            DataUser.age.value = it
                         },
         label = { Text("age") },
-        keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number)
+        keyboardOptions = KeyboardOptions(
+            keyboardType = KeyboardType.Number,
+            imeAction = ImeAction.Done
+        ),
+        leadingIcon = {
+            Icon(Icons.Default.DateRange, contentDescription = "Age icon")
+        }
     )
     OutlinedTextField(
         value = DataUser.gmail.value,
         onValueChange = {DataUser.gmail.value = it.lowercase() },
         label = { Text("gmail") },
-        keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Email)
+        keyboardOptions = KeyboardOptions(
+            keyboardType = KeyboardType.Email,
+            imeAction = ImeAction.Done
+        ),
+        leadingIcon = {
+            Icon(Icons.Default.MailOutline, contentDescription = "Mail Icon")
+        }
     )
     OutlinedTextField(
         value = DataUser.password.value,
-        onValueChange = {DataUser.password.value = it.lowercase() },
+        onValueChange = {DataUser.password.value = it.lowercase()},
         label = { Text("password") },
-        keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Email)
+        keyboardOptions = KeyboardOptions(
+            keyboardType = KeyboardType.Password,
+            imeAction = ImeAction.Done
+        ),
+        visualTransformation = PasswordVisualTransformation(),
+        leadingIcon = {
+            Icon(Icons.Default.Lock, contentDescription = "Password Icon")
+        }
     )
 }
 

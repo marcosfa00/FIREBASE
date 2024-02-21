@@ -84,6 +84,10 @@ dependencies {
     implementation("com.google.firebase:firebase-auth-ktx")//Authentication
     implementation("com.google.firebase:firebase-firestore-ktx")
 
+    implementation ("com.google.accompanist:accompanist-systemuicontroller:0.20.0")
+
+
+
 
 
 
