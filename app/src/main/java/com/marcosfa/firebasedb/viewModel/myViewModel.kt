@@ -164,11 +164,20 @@ class myViewModel(private val model: repository ): ViewModel() {
             Log.d(TAG2, DataUser.userConnected.value.toString())
             if (DataUser.userConnected.value?.gmail.equals("marcos@gmail.com")){
                 DataUser.state.value = DataUser.State.ADMIN
+            }else{
+                DataUser.state.value = DataUser.State.HOME
             }
         }
     }
 
-
+    /**
+     * Deletes a user from the model based on their email address [gmail].
+     *
+     * This function is designed to be called within a [viewModelScope.launch] coroutine scope to perform
+     * asynchronous operations. It deletes the user using the [model.deleteUser] method.
+     *
+     * @param gmail The email address of the user to be deleted.
+     */
     fun deleteUser(gmail: String){
         viewModelScope.launch {
             model.deleteUser(gmail)
@@ -176,7 +185,15 @@ class myViewModel(private val model: repository ): ViewModel() {
     }
 
 
-
+    /**
+     * Updates the age of the current user with the provided [age].
+     *
+     * This function is designed to be called within a [viewModelScope.launch] coroutine scope to perform
+     * asynchronous operations. It updates the user's age using the [model.updateAgeUser] method, retrieves
+     * the updated user information, and logs a message indicating that the age has been updated.
+     *
+     * @param age The new age value to be assigned to the current user.
+     */
     fun updateAge(age: String){
         viewModelScope.launch {
             model.updateAgeUser(DataUser.currentID.value,age)
