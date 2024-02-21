@@ -5,7 +5,9 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.google.android.gms.tasks.Task
 import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.ktx.Firebase
 import com.marcosfa.firebasedb.model.DataUser
 import com.marcosfa.firebasedb.model.TAG
 import com.marcosfa.firebasedb.model.TAG2
@@ -112,6 +114,7 @@ class myViewModel(private val model: repository ): ViewModel() {
         autentificacion.signInWithEmailAndPassword(mail,password)
             .addOnCompleteListener { task ->
                 if (task.isSuccessful) {
+                    DataUser.currentID.value = autentificacion.currentUser?.uid.toString()
                     Log.d(TAG2, "Inicio de sesión exitoso para ${autentificacion.currentUser?.uid}")
                     DataUser.state.value = DataUser.State.HOME
                 }else{
@@ -121,7 +124,17 @@ class myViewModel(private val model: repository ): ViewModel() {
     }
 
 
-
+    /**
+     * Retrieves user data for the current user based on the provided [mail].
+     *
+     * This function first updates the user data by invoking [listenForUserChanges], then iterates through
+     * the updated user list in [DataUser.users.value] to find the user with the specified email [mail].
+     * The user data is then returned.
+     *
+     * @param mail The email address of the user for whom data is to be retrieved.
+     * @return A [User] object containing the data of the user with the specified email, or a default
+     * [User] object if the user is not found.
+     */
     fun getDataCurrentUser(mail: String):User{
         // actualizamos los datos de los usuarios
         listenForUserChanges()
@@ -134,6 +147,45 @@ class myViewModel(private val model: repository ): ViewModel() {
         }
         return user
     }
+
+
+
+    /**
+     * Retrieves user information by their unique identifier [id] using the [model.getUserConnected] method.
+     *
+     * This function is designed to be called within a [viewModelScope.launch] coroutine scope to perform
+     * asynchronous operations. It fetches the user information and logs the result using [Log.d].
+     *
+     * @param id The unique identifier of the user.
+     */
+    fun getuserById(id:String) {
+        viewModelScope.launch {
+            model.getUserConnected(id)
+            Log.d(TAG2, DataUser.userConnected.value.toString())
+            if (DataUser.userConnected.value?.gmail.equals("marcos@gmail.com")){
+                DataUser.state.value = DataUser.State.ADMIN
+            }
+        }
+    }
+
+
+    fun deleteUser(gmail: String){
+        viewModelScope.launch {
+            model.deleteUser(gmail)
+        }
+    }
+
+
+
+    fun updateAge(age: String){
+        viewModelScope.launch {
+            model.updateAgeUser(DataUser.currentID.value,age)
+            getuserById(DataUser.currentID.value)
+
+            Log.d(TAG2,"Edad Acualizada")
+        }
+    }
+
 
 
 

@@ -30,7 +30,10 @@ object DataUser {
     val gmail = mutableStateOf("")
     val password = mutableStateOf("")
     val users = mutableStateOf<List<User>>(emptyList())
+    val userConnected = mutableStateOf<User?>(null)
     var state : MutableState<State> = mutableStateOf( State.REGISTRO)
+    val currentID = mutableStateOf("")
+    val gmailUsuarioAEliminar = mutableStateOf("")
 
 
     /**
@@ -46,7 +49,8 @@ object DataUser {
     enum class State{
         REGISTRO,
         LOGIN,
-        HOME
+        HOME,
+        ADMIN
     }
 
 

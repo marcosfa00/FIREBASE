@@ -4,6 +4,7 @@ import android.annotation.SuppressLint
 import android.util.Log
 import com.google.android.gms.tasks.Task
 import com.google.firebase.firestore.DocumentReference
+import com.google.firebase.firestore.DocumentSnapshot
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.QuerySnapshot
 import kotlinx.coroutines.channels.awaitClose
@@ -89,7 +90,12 @@ object repository {
     }
 
     /**
-     * Creates a callback flow for listening to changes in the "users" collection in a Firestore database.
+     * Creates a callback flow that listens for changes in the "users" collection in the Firestore database.
+     *
+     * This function uses a callback flow to continuously monitor changes in the Firestore database
+     * "users" collection. It emits a list of [User] objects whenever there is a change in the collection.
+     *
+     * @return A callback flow that emits a list of [User] objects whenever there is a change in the "users" collection.
      */
     fun listenForUserChanges() = callbackFlow<List<User>> {
         // inicializa el listener
@@ -106,6 +112,93 @@ object repository {
             }
         awaitClose { listener.remove() }
     }
+
+
+    /**
+     * Retrieves user information from the Firestore database based on the provided [id].
+     *
+     * This function queries the "users" collection in the Firestore database using the [id]. If the
+     * query is successful, it converts the Firestore document to a [User] object and updates the
+     * [DataUser.userConnected] LiveData with the retrieved user information. If the query fails,
+     * it sets the [DataUser.userConnected] LiveData to null.
+     *
+     * @param id The unique identifier of the user to retrieve from the Firestore database.
+     */
+    fun getUserConnected(id: String) {
+        database.collection("users").document(id).get().addOnSuccessListener { document ->
+            val user = document?.toObject(User::class.java)
+            DataUser.userConnected.value = user
+            Log.d(TAG2, "user by id $id = ${user.toString()}")
+        }.addOnFailureListener {
+            DataUser.userConnected.value = null
+        }
+    }
+
+
+    fun deleteUser(gmail:String){
+        val usersCollection =  database.collection("users")
+        val query = usersCollection.whereEqualTo("gmail",gmail)
+        query.get().addOnSuccessListener{querySnapshot ->
+            //verificamos si se encontraron documentos:
+            if (!querySnapshot.isEmpty) {
+                // Itera sobre los documentos y elimina cada uno
+                for (document in querySnapshot.documents) {
+                    document.reference.delete().addOnSuccessListener {
+                        // Documento eliminado con éxito
+                        Log.d(TAG2, "Usuario con correo $gmail eliminado exitosamente.")
+                    }.addOnFailureListener { exception ->
+                        // Manejo de errores al intentar eliminar el documento
+                        Log.e(TAG2, "Error al eliminar usuario con correo $gmail", exception)
+                    }
+                }
+            } else {
+                // No se encontraron documentos con el correo proporcionado
+                Log.d(TAG2, "No se encontraron usuarios con correo $gmail.")
+            }
+
+        }.addOnFailureListener{exception ->
+            Log.e(TAG2, "Error al consultar usuarios por correo $gmail", exception)
+
+        }
+    }
+
+
+    /**
+     * Actualiza el campo "age" de un usuario en la colección "users" de Firestore.
+     *
+     * Esta función toma el UID del usuario y el nuevo valor del campo "age", y utiliza el método
+     * [update] para aplicar la actualización al documento correspondiente en la colección "users".
+     * La actualización se refleja en el registro de la consola y en caso de éxito o fracaso.
+     *
+     * @param uid El UID único del usuario cuyo campo "age" se va a actualizar.
+     * @param age El nuevo valor que se asignará al campo "age" del usuario.
+     */
+    fun updateAgeUser(uid: String, age: String) {
+        // Referencia a la colección "users" en Firestore
+        val userCollection = database.collection("users")
+
+        // Crea un mapa con el campo a actualizar y su nuevo valor
+        val updates = hashMapOf<String, Any>(
+            "age" to age
+        )
+
+        // Actualiza el documento con el nuevo valor
+        userCollection.document(uid)
+            .update(updates)
+            .addOnSuccessListener {
+                // Actualización exitosa
+
+                Log.d(TAG, "Gmail del usuario con UID $uid actualizado a $age.")
+            }
+            .addOnFailureListener { exception ->
+                // Manejo de errores al intentar actualizar el documento
+                Log.e(TAG, "Error al actualizar el gmail del usuario con UID $uid", exception)
+            }
+    }
+
+
+
+
 
 
 
