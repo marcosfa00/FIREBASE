@@ -1,6 +1,4 @@
 
-<<<<<<< HEAD
-=======
 # CONEXIÓN CON BASE DE DATOS FIREBASE
 Bien a continuacion vamos a explicar paso a paso como crear una aplicacion en **Android studio** en **Kotlin** en la cual nos conectaremos a una base de datos [FIREBASE](https://firebase.google.com)
 
