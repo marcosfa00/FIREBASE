@@ -17,8 +17,10 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.google.firebase.auth.FirebaseAuth
 import com.marcosfa.firebasedb.model.DataUser
 import com.marcosfa.firebasedb.viewModel.myViewModel
+import java.net.Authenticator
 
 @Composable
 fun WelcomeText(viewModel: myViewModel) {
@@ -42,7 +44,7 @@ fun WelcomeText(viewModel: myViewModel) {
             )
             ButtonVolver()
             DatosUsuario(viewModel)
-
+            ButtonDeleteAccount(viewModel )
         }
 
     }
@@ -104,6 +106,21 @@ fun DatosUsuario(viewModel: myViewModel){
             )
         }
     }
+}
+
+
+
+@Composable
+fun ButtonDeleteAccount(viewModel: myViewModel){
+    Button(onClick = {
+        viewModel.deleteAccount()
+        DataUser.state.value = DataUser.State.LOGIN
+
+
+    }) {
+        Text(text = "ELIMINAR MI CUENTA")
+    }
+
 }
 
 

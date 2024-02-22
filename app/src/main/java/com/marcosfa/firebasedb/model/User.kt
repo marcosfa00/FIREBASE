@@ -34,6 +34,7 @@ object DataUser {
     var state : MutableState<State> = mutableStateOf( State.REGISTRO)
     val currentID = mutableStateOf("")
     val gmailUsuarioAEliminar = mutableStateOf("")
+    val passwordUsuarioEliminar = mutableStateOf("")
 
 
     /**

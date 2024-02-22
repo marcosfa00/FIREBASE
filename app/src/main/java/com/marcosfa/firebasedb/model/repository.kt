@@ -3,10 +3,13 @@ package com.marcosfa.firebasedb.model
 import android.annotation.SuppressLint
 import android.util.Log
 import com.google.android.gms.tasks.Task
+import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.auth.ktx.auth
 import com.google.firebase.firestore.DocumentReference
 import com.google.firebase.firestore.DocumentSnapshot
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.QuerySnapshot
+import com.google.firebase.ktx.Firebase
 import kotlinx.coroutines.channels.awaitClose
 import kotlinx.coroutines.flow.callbackFlow
 
@@ -163,6 +166,42 @@ object repository {
     }
 
 
+
+
+
+
+
+
+    fun getDocumentIdByField(gmail:String, onComplete: (String?) -> Unit) {
+
+        val db = FirebaseFirestore.getInstance()
+        val collectionRef = db.collection("users")
+
+        collectionRef.whereEqualTo("gmail", gmail)
+            .get()
+            .addOnSuccessListener { querySnapshot ->
+                if (!querySnapshot.isEmpty) {
+                    // Encontró documentos que coinciden con el campo y valor proporcionados
+                    val documentId = querySnapshot.documents[0].id
+                    Log.d(TAG2,"El id del usuario a eliminar es $documentId")
+                    onComplete(documentId)
+                } else {
+                    // No se encontraron documentos que coincidan
+                    Log.d(TAG2,"NO SE HA OBTEMNIDO EL ID")
+                    onComplete(null)
+                }
+            }
+            .addOnFailureListener { exception ->
+                // Manejo de errores al consultar la colección
+                onComplete(null)
+            }
+    }
+
+
+
+
+
+
     /**
      * Actualiza el campo "age" de un usuario en la colección "users" de Firestore.
      *
@@ -195,10 +234,6 @@ object repository {
                 Log.e(TAG, "Error al actualizar el gmail del usuario con UID $uid", exception)
             }
     }
-
-
-
-
 
 
 

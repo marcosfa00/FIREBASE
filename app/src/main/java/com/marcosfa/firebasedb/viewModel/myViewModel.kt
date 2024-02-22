@@ -7,6 +7,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.google.android.gms.tasks.Task
 import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.auth.ktx.auth
 import com.google.firebase.ktx.Firebase
 import com.marcosfa.firebasedb.model.DataUser
 import com.marcosfa.firebasedb.model.TAG
@@ -185,6 +186,26 @@ class myViewModel(private val model: repository ): ViewModel() {
     }
 
 
+    fun deleteAccount(){
+        viewModelScope.launch {
+            deleteUser(DataUser.gmail.value)
+        }
+
+        val user = Firebase.auth.currentUser
+
+        user?.delete()
+            ?.addOnSuccessListener {
+                // Cuenta eliminada correctamente
+            }
+            ?.addOnFailureListener { e ->
+                // Ocurrió un error al intentar eliminar la cuenta
+                // Puedes imprimir el mensaje de error o manejarlo de la manera que prefieras
+                println("Error al eliminar la cuenta: $e")
+            }
+
+    }
+
+
     /**
      * Updates the age of the current user with the provided [age].
      *
@@ -202,7 +223,6 @@ class myViewModel(private val model: repository ): ViewModel() {
             Log.d(TAG2,"Edad Acualizada")
         }
     }
-
 
 
 

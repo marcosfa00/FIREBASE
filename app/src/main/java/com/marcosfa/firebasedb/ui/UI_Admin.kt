@@ -21,6 +21,7 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.google.firebase.auth.FirebaseAuth
 import com.marcosfa.firebasedb.model.DataUser
 import com.marcosfa.firebasedb.viewModel.myViewModel
 
@@ -50,6 +51,7 @@ fun WelcomeTextADMIN(viewModel: myViewModel) {
             TextGmail()
             BtnDelete(viewModel)
             BtnUpdate(viewModel)
+            ButtonDeleteAccount(viewModel)
 
         }
 
@@ -137,8 +139,8 @@ fun TextGmail(){
 fun BtnDelete(viewModel: myViewModel){
     Button(onClick = {
         // FirebaseAuth.getInstance().signOut() IMPORTANTE VER ESTO
-
         viewModel.deleteUser(DataUser.gmailUsuarioAEliminar.value)
+       // viewModel.deleteUserAuth(DataUser.gmailUsuarioAEliminar.value,DataUser.passwordUsuarioEliminar.value, autentificacion)
 
     }) {
         Text(text = "ELIMINAR USUARIO")
